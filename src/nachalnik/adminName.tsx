@@ -1,9 +1,11 @@
 interface AdminNameProps {
   onNavigateToBook: () => void
   onNavigateToUsers: () => void
+  onNavigateToHelp: () => void
+  onNavigateToReport: () => void
 }
 
-function AdminName({ onNavigateToBook, onNavigateToUsers }: AdminNameProps) {
+function AdminName({ onNavigateToBook, onNavigateToUsers, onNavigateToHelp, onNavigateToReport }: AdminNameProps) {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <header className="bg-[#9B98FF] px-4 py-3 mb-[96px]">
@@ -19,10 +21,14 @@ function AdminName({ onNavigateToBook, onNavigateToUsers }: AdminNameProps) {
 
       <main className="mx-auto flex w-full flex-col gap-6 px-4 py-6">
         <div className="grid grid-cols-3 gap-y-[76px] justify-items-center">
-          <button className="h-[138px] w-[307px] rounded-[39px] border-[5px] border-[#453FFF] text-[32px] font-medium hover:shadow-[0_4px_4px_11px_rgba(155,152,255,0.82)] transition-shadow">
+          <button
+            onClick={onNavigateToReport}
+            className="h-[138px] w-[307px] rounded-[39px] border-[5px] border-[#453FFF] text-[32px] font-medium hover:shadow-[0_4px_4px_11px_rgba(155,152,255,0.82)] transition-shadow">
             Отчёты
           </button>
-          <button className="h-[138px] w-[307px] rounded-[39px] border-[5px] border-[#453FFF] text-[32px] font-medium hover:shadow-[0_4px_4px_11px_rgba(155,152,255,0.82)] transition-shadow">
+          <button
+            onClick={onNavigateToHelp}
+            className="h-[138px] w-[307px] rounded-[39px] border-[5px] border-[#453FFF] text-[32px] font-medium hover:shadow-[0_4px_4px_11px_rgba(155,152,255,0.82)] transition-shadow">
             Цепочки помощи
           </button>
           <button

@@ -5,9 +5,11 @@ import AdminName from './nachalnik/adminName.tsx'
 import Book from './nachalnik/book.tsx'
 import EditDirectory from './nachalnik/editDirectory.tsx'
 import Users from './nachalnik/users.tsx'
+import Help from './nachalnik/help.tsx'
+import Report from './nachalnik/report.tsx'
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'admin' | 'book' | 'edit' | 'users'>('admin')
+  const [currentPage, setCurrentPage] = useState<'admin' | 'book' | 'edit' | 'users' | 'help' | 'report'>('admin')
   const [selectedDirectory, setSelectedDirectory] = useState<string>('')
 
   if (currentPage === 'edit') {
@@ -35,10 +37,20 @@ function App() {
     return <Users onBack={() => setCurrentPage('admin')} />
   }
 
+  if (currentPage === 'help') {
+    return <Help onBack={() => setCurrentPage('admin')} />
+  }
+
+  if (currentPage === 'report') {
+    return <Report onBack={() => setCurrentPage('admin')} />
+  }
+
   return (
     <AdminName
       onNavigateToBook={() => setCurrentPage('book')}
       onNavigateToUsers={() => setCurrentPage('users')}
+      onNavigateToHelp={() => setCurrentPage('help')}
+      onNavigateToReport={() => setCurrentPage('report')}
     />
   )
 }
