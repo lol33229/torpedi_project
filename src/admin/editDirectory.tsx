@@ -53,16 +53,18 @@ function EditDirectory({ directoryName, onBack, initialItems = [] }: EditDirecto
   }
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
-      <header className="bg-[#9B98FF] px-4 py-3">
-        <div className="mx-auto flex w-full items-center justify-start gap-4">
-          <div className="flex items-center gap-4 ml-[110px]">
+    <div className="w-full max-w-6xl mx-auto">
+      <div className="bg-white rounded-lg border-2 border-[#9B98FF] p-6">
+        {/* Заголовок с кнопкой назад */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="flex items-center gap-2 text-[32px] font-semibold text-[#000000]">
+              className="flex items-center gap-2 text-[18px] font-semibold text-[#0066FF] hover:text-blue-700 transition-colors"
+            >
               <svg
-                width="32"
-                height="32"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -77,54 +79,51 @@ function EditDirectory({ directoryName, onBack, initialItems = [] }: EditDirecto
               </svg>
               Назад
             </button>
+            <h1 className="text-[24px] font-bold text-black">
+              Редактирование — {directoryName}
+            </h1>
           </div>
-          <span className="text-[32px] font-medium text-[#000000] ml-[70px]">
-            Редактирование — {directoryName}
-          </span>
         </div>
-      </header>
 
-      <main className="mx-auto flex w-full flex-col gap-6 px-4 py-6">
-        <div className="mx-auto w-full bg-white p-6">
-          <div className="mb-6 flex items-center justify-between mx-[111px]">
-            <div className="flex items-center gap-4">
-              <span className="text-[35px] font-bold text-[#000000]">Поиск:</span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Введите текст для поиска"
-                className="w-[351px] h-[42px] rounded-[39px] border-[4px] border-[#453FFF] px-4 text-[20px] font-medium focus:outline-none"
+        {/* Поиск и кнопка добавления */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="text-[18px] font-semibold text-black">Поиск:</span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Введите текст для поиска"
+              className="w-[300px] h-[40px] rounded-lg border-2 border-[#9B98FF] px-4 text-[16px] font-medium focus:outline-none focus:border-[#7B79E6]"
+            />
+          </div>
+          <button
+            onClick={handleAdd}
+            className="flex items-center gap-2 px-4 py-2 bg-[#9B98FF] text-white text-[18px] font-semibold rounded-lg hover:bg-[#7B79E6] transition-colors"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 5V19M5 12H19"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
-            </div>
-            <button
-              onClick={handleAdd}
-              className="flex items-center gap-2 px-4 py-2 text-[35px] font-extrabold text-black mt-[40px]">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 5V19M5 12H19"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              Добавить
-            </button>
-          </div>
+            </svg>
+            Добавить
+          </button>
         </div>
 
-        <div className="w-full flex flex-col gap-2">
+        {/* Список элементов */}
+        <div className="flex flex-col gap-2 mb-6">
           {items.map((item, index) => {
-            // Показываем элемент только если он соответствует поисковому запросу или поиск пустой
             const shouldShow = searchQuery === '' || item.toLowerCase().includes(searchQuery.toLowerCase())
-            
             if (!shouldShow) return null
 
             const isEditing = editingIndex === index
@@ -133,11 +132,11 @@ function EditDirectory({ directoryName, onBack, initialItems = [] }: EditDirecto
             return (
               <div
                 key={index}
-                className={`w-full ${bgColor}`}
+                className={`w-full ${bgColor} rounded-lg`}
               >
-                <div className="mx-auto w-full flex items-center justify-between px-[105px] py-3">
+                <div className="w-full flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-4 flex-1">
-                    <span className="text-[32px] font-medium text-[#000000] min-w-[40px]">
+                    <span className="text-[16px] font-medium text-black min-w-[30px]">
                       {index + 1}.
                     </span>
                     {isEditing ? (
@@ -154,21 +153,23 @@ function EditDirectory({ directoryName, onBack, initialItems = [] }: EditDirecto
                             }
                           }}
                           autoFocus
-                          className="flex-1 border-2 border-[#453FFF] px-3 py-2 text-[20px] focus:outline-none"
+                          className="flex-1 border-2 border-[#9B98FF] px-3 py-2 text-[16px] rounded-lg focus:outline-none focus:border-[#7B79E6]"
                         />
                         <button
                           onClick={() => handleSave(index)}
-                          className="rounded-lg bg-green-600 px-4 py-2 text-[18px] font-semibold text-white hover:bg-green-700 transition">
+                          className="px-4 py-2 bg-green-600 text-white text-[14px] font-semibold rounded-lg hover:bg-green-700 transition"
+                        >
                           Сохранить
                         </button>
                         <button
                           onClick={handleCancel}
-                          className="rounded-lg bg-gray-600 px-4 py-2 text-[18px] font-semibold text-white hover:bg-gray-700 transition">
+                          className="px-4 py-2 bg-gray-600 text-white text-[14px] font-semibold rounded-lg hover:bg-gray-700 transition"
+                        >
                           Отмена
                         </button>
                       </div>
                     ) : (
-                      <span className="text-[32px] font-medium text-[#000000] flex-1">
+                      <span className="text-[18px] font-medium text-black flex-1">
                         {item}
                       </span>
                     )}
@@ -176,11 +177,12 @@ function EditDirectory({ directoryName, onBack, initialItems = [] }: EditDirecto
                   {!isEditing && (
                     <button
                       onClick={() => handleDelete(index)}
-                      className="p-2 hover:opacity-70 transition">
+                      className="p-2 hover:opacity-70 transition"
+                    >
                       <img
                         src="/image/trash.png"
                         alt="Удалить"
-                        className="w-6 h-6"
+                        className="w-5 h-5"
                       />
                     </button>
                   )}
@@ -190,17 +192,16 @@ function EditDirectory({ directoryName, onBack, initialItems = [] }: EditDirecto
           })}
         </div>
 
-        <div className="mx-auto w-full">
-
-          <div className="flex justify-end">
-            <button
-              onClick={handleDeleteDirectory}
-              className="rounded-[39px] bg-[#FF3333] mr-[195px] text-[24px] font-medium text-white hover:bg-red-700 transition w-[299px] h-[41px]">
-              Удалить справочник
-            </button>
-          </div>
+        {/* Кнопка удаления справочника */}
+        <div className="flex justify-end">
+          <button
+            onClick={handleDeleteDirectory}
+            className="px-6 py-2 bg-[#FF3333] text-white text-[16px] font-medium rounded-lg hover:bg-red-700 transition"
+          >
+            Удалить справочник
+          </button>
         </div>
-      </main>
+      </div>
     </div>
   )
 }
