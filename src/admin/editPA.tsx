@@ -113,7 +113,7 @@ function EditPA({ blankId, blankNumber, onBack }: EditPAProps) {
 
   return (
     <div className="w-full">
-      <div className="bg-white rounded-lg p-6">
+      <div className="bg-white min-w-[550px] rounded-lg">
 
         {/* Верхняя навигация и выбор типа ПА */}
         <div className="mb-6 grid grid-cols-3 items-center">

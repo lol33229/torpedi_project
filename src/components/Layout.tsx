@@ -121,7 +121,7 @@ function Layout({ children, currentPage, onNavigate, onLogout, userRole, userInf
       {!isMenuOpen && (
         <button
           onClick={openMenu}
-          className="lg:hidden fixed top-[90px] left-10 burger-button p-3 hover:bg-gray-50 transition-all duration-300 z-40"
+          className="lg:hidden fixed top-[90px] left-7 md:left-9  burger-button p-3 hover:bg-gray-50 transition-all duration-300 z-40"
           aria-label="Открыть меню"
         >
           {/* Контейнер для полосок */}
@@ -138,17 +138,17 @@ function Layout({ children, currentPage, onNavigate, onLogout, userRole, userInf
       {shouldRenderMenu && (
         <div className="lg:hidden fixed z-30 burger-menu-container">
           <aside className={`
-            absolute w-[296px] border-[3px] border-gray-300 bg-white top-[70px] left-12 rounded-lg z-40 shadow-lg
+            absolute w-[200px] border-[3px] border-gray-300 bg-white top-[70px] left-10 md:left-12 rounded-lg z-40 shadow-lg
             transition-all duration-300 ease-out
             opacity-0 -translate-y-4
             ${menuAnimationClass}
           `}>
-            <div className="p-4 border-b border-gray-300 flex items-center justify-between">
-              <h2 className="text-[24px] font-bold text-black">Меню</h2>
+            <div className="p-2  border-gray-300 flex items-center justify-between">
+              <h2 className="text-[16px] pt-[3px] pl-[3px] font-bold text-black">Меню</h2>
               {/* Кнопка закрытия меню */}
               <button
                 onClick={closeMenu}
-                className="p-2 hover:bg-gray-100 rounded transition-colors" // Увеличено с p-1 до p-2
+                className="p-1 hover:bg-gray-100 rounded transition-colors"
                 aria-label="Закрыть меню"
               >
                 <svg
@@ -169,13 +169,14 @@ function Layout({ children, currentPage, onNavigate, onLogout, userRole, userInf
                 </svg>
               </button>
             </div>
+            <div className="h-[1px] bg-gray-300 w-[170px] mx-auto"></div>
             <nav className="flex flex-col">
               {menuItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => handleNavigate(item.id)}
-                  className={`w-full text-left px-4 py-3 text-[20px] font-medium transition-colors ${currentPage === item.id
-                    ? 'bg-[#9B98FF] text-black'
+                  className={`w-full text-left px-3 pr-2 py-2 text-[16px] font-normal transition-colors ${currentPage === item.id
+                    ? 'bg-[#D9D9D9] text-black'
                     : 'text-black hover:bg-gray-100'
                     }`}
                 >
@@ -189,9 +190,10 @@ function Layout({ children, currentPage, onNavigate, onLogout, userRole, userInf
 
       {/* Десктопное меню */}
       <aside className="hidden lg:block w-[296px] border border-gray-300 bg-white fixed top-[55px] left-0 rounded mt-[55px] ml-[50px]">
-        <div className="p-4 border-b border-gray-300">
-          <h2 className="text-[24px] font-bold text-black">Меню</h2>
+        <div className="p-2">
+          <h2 className="text-[24px] font-bold pt-2 pl-2 text-black">Меню</h2>
         </div>
+        <div className="h-[1px] bg-gray-300 w-[250px] mx-auto"></div>
         <nav className="flex flex-col">
           {menuItems.map((item) => (
             <button
