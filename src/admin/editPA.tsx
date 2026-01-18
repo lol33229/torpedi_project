@@ -26,7 +26,7 @@ function EditPA({ blankId, blankNumber, onBack }: EditPAProps) {
   const [productName, setProductName] = useState('')
   const [department, setDepartment] = useState('')
   const [fillerName, setFillerName] = useState('')
-  const [workingHours, setWorkingHours] = useState('')
+  const [workingHours, /*setWorkingHours*/] = useState('')
   const [cycleTime, setCycleTime] = useState('')
   const [dailyPace, setDailyPace] = useState('')
 

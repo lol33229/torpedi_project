@@ -12,6 +12,9 @@ import ReportNachalnik from './nachalnik/report.tsx'
 import PAAdmin from './admin/pa.tsx'
 import PANachalnik from './nachalnik/pa.tsx'
 import Operator from './operator/operator.tsx'
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW({ immediate: true })
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -80,7 +83,7 @@ function App() {
           </div>
         )
       default:
-        return userRole === 'admin' 
+        return userRole === 'admin'
           ? <Book onEditDirectory={(name) => { setSelectedDirectory(name); setIsEditing(true) }} />
           : <ReportNachalnik />
     }
@@ -96,9 +99,9 @@ function App() {
   }
 
   return (
-    <Layout 
-      currentPage={currentPage} 
-      onNavigate={handleNavigate} 
+    <Layout
+      currentPage={currentPage}
+      onNavigate={handleNavigate}
       onLogout={handleLogout}
       userRole={userRole}
       userInfo={userInfo}
