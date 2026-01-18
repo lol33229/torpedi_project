@@ -23,7 +23,13 @@ function PA() {
       <EditPA
         blankId={editingBlank.id}
         blankNumber={editingBlank.number}
-        onBack={() => setEditingBlank(null)}
+        onBack={() => {
+          setEditingBlank(null)
+          // Обновляем список бланков после создания/редактирования
+          if (!blanks.find(b => b.id === editingBlank.id)) {
+            setBlanks([...blanks, { id: editingBlank.id, number: editingBlank.number }])
+          }
+        }}
       />
     )
   }
@@ -37,7 +43,7 @@ function PA() {
   const handleAddNew = () => {
     const newId = blanks.length > 0 ? Math.max(...blanks.map((b) => b.id)) + 1 : 1
     const newNumber = blanks.length > 0 ? Math.max(...blanks.map((b) => b.number)) + 1 : 1
-    setBlanks([...blanks, { id: newId, number: newNumber }])
+    setEditingBlank({ id: newId, number: newNumber })
   }
 
   return (

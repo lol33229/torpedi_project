@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import EditPA from '../admin/editPA'
 
 function PA() {
   const [blanks, setBlanks] = useState([
@@ -8,19 +9,41 @@ function PA() {
     { id: 4, number: 4 },
   ])
 
+  const [editingBlank, setEditingBlank] = useState<{ id: number; number: number } | null>(null)
+
   const handleEdit = (id: number) => {
-    console.log('Редактировать бланк', id)
-    // Здесь будет логика редактирования
+    const blank = blanks.find(b => b.id === id)
+    if (blank) {
+      setEditingBlank({ id: blank.id, number: blank.number })
+    }
   }
 
   const handleDelete = (id: number) => {
-    setBlanks(blanks.filter((blank) => blank.id !== id))
+    if (window.confirm(`Вы уверены, что хотите удалить бланк № ${blanks.find(b => b.id === id)?.number}?`)) {
+      setBlanks(blanks.filter((blank) => blank.id !== id))
+    }
   }
 
   const handleAddNew = () => {
     const newId = blanks.length > 0 ? Math.max(...blanks.map((b) => b.id)) + 1 : 1
     const newNumber = blanks.length > 0 ? Math.max(...blanks.map((b) => b.number)) + 1 : 1
-    setBlanks([...blanks, { id: newId, number: newNumber }])
+    setEditingBlank({ id: newId, number: newNumber })
+  }
+
+  if (editingBlank) {
+    return (
+      <EditPA
+        blankId={editingBlank.id}
+        blankNumber={editingBlank.number}
+        onBack={() => {
+          setEditingBlank(null)
+          // Обновляем список бланков после создания/редактирования
+          if (!blanks.find(b => b.id === editingBlank.id)) {
+            setBlanks([...blanks, { id: editingBlank.id, number: editingBlank.number }])
+          }
+        }}
+      />
+    )
   }
 
   return (

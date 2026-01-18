@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface EditPAProps {
   blankId: number
@@ -47,7 +47,13 @@ function EditPA({ blankId, blankNumber, onBack }: EditPAProps) {
   const [setupFrom, setSetupFrom] = useState('')
   const [setupTo, setSetupTo] = useState('')
 
-  const paTypes = ['Тип 1', 'Тип 2', 'Тип 3']
+  const paTypes = [
+    'Почасовой по времени такта',
+    'Почасовой по мощности рабочего места',
+    'Почасовой несколько номенклатур',
+    'Почасовой менее 1 изделия в час',
+    'Почасовой менее 1 изделия в смену'
+  ]
 
   const initialTimeSlots: TimeSlot[] = [
     { time: '08:00 - 09:00', plan: '', planCumulative: '', fact: '', factCumulative: '', deviation: '', deviationCumulative: '', downtime: '', responsible: '', reasonGroups: '', reasons: '', isBreak: false },
@@ -87,28 +93,79 @@ function EditPA({ blankId, blankNumber, onBack }: EditPAProps) {
     onBack()
   }
 
+  // Функция для пересчета всех накопительных значений
+  const recalculateCumulativeValues = (rowsToCalculate: TimeSlot[]): TimeSlot[] => {
+    const newRows = [...rowsToCalculate]
+    let planSum = 0
+    let factSum = 0
+
+    for (let i = 0; i < newRows.length; i++) {
+      if (!newRows[i].isBreak) {
+        const plan = parseFloat(newRows[i].plan) || 0
+        const fact = parseFloat(newRows[i].fact) || 0
+
+        planSum += plan
+        factSum += fact
+
+        // Отклонение для текущего периода
+        const deviation = fact - plan
+        newRows[i].deviation = deviation !== 0 ? deviation.toString() : ''
+
+        // Накопительные значения (показываем всегда, если есть данные)
+        newRows[i].planCumulative = planSum.toString()
+        newRows[i].factCumulative = factSum.toString()
+        
+        // Накопительное отклонение (показываем только если не равно 0)
+        const deviationCumulative = factSum - planSum
+        newRows[i].deviationCumulative = deviationCumulative !== 0 ? deviationCumulative.toString() : ''
+      } else {
+        // Для перерывов сохраняем предыдущие накопительные значения
+        // (они уже установлены на предыдущей итерации)
+      }
+    }
+
+    return newRows
+  }
+
+  // Автоматический расчет плана при изменении времени такта или суточного темпа для типа "Почасовой по времени такта"
+  useEffect(() => {
+    if (paType !== 'Почасовой по времени такта' || !cycleTime || !dailyPace) {
+      return
+    }
+
+    const cycleTimeNum = parseFloat(cycleTime)
+    const dailyPaceNum = parseFloat(dailyPace)
+
+    if (isNaN(cycleTimeNum) || isNaN(dailyPaceNum) || cycleTimeNum <= 0 || dailyPaceNum <= 0) {
+      return
+    }
+
+    // Рассчитываем план на час: (3600 сек / время такта в сек)
+    const planPerHour = Math.floor(3600 / cycleTimeNum)
+
+    // Обновляем план для всех рабочих периодов
+    setRows(prevRows => {
+      const newRows = prevRows.map(row => {
+        if (!row.isBreak) {
+          return { ...row, plan: planPerHour.toString() }
+        }
+        return row
+      })
+      return recalculateCumulativeValues(newRows)
+    })
+  }, [cycleTime, dailyPace, paType])
+
   const updateRow = (index: number, field: keyof TimeSlot, value: string) => {
     const newRows = [...rows]
     newRows[index] = { ...newRows[index], [field]: value }
 
-    // Автоматический расчет накопительных значений и отклонений
+    // Автоматический расчет накопительных значений и отклонений при изменении плана или факта
     if (field === 'plan' || field === 'fact') {
-      let planSum = 0
-      let factSum = 0
-      for (let i = 0; i <= index; i++) {
-        if (!newRows[i].isBreak) {
-          planSum += parseFloat(newRows[i].plan) || 0
-          factSum += parseFloat(newRows[i].fact) || 0
-        }
-        newRows[i].planCumulative = planSum > 0 ? planSum.toString() : ''
-        newRows[i].factCumulative = factSum > 0 ? factSum.toString() : ''
-        newRows[i].deviation = (parseFloat(newRows[i].fact) - parseFloat(newRows[i].plan) || 0).toString() || ''
-        const deviationSum = factSum - planSum
-        newRows[i].deviationCumulative = deviationSum !== 0 ? deviationSum.toString() : ''
-      }
+      const recalculatedRows = recalculateCumulativeValues(newRows)
+      setRows(recalculatedRows)
+    } else {
+      setRows(newRows)
     }
-
-    setRows(newRows)
   }
 
   return (
