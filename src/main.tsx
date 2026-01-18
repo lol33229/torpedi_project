@@ -9,7 +9,9 @@ import Users from './admin/users.tsx'
 import Help from './admin/help.tsx'
 import ReportAdmin from './admin/report.tsx'
 import ReportNachalnik from './nachalnik/report.tsx'
+import PAAdmin from './admin/pa.tsx'
 import PANachalnik from './nachalnik/pa.tsx'
+import Operator from './operator/operator.tsx'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -70,13 +72,7 @@ function App() {
       case 'report':
         return userRole === 'admin' ? <ReportAdmin /> : <ReportNachalnik />
       case 'pa':
-        return userRole === 'admin' ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-[24px] text-gray-600">Страница "Бланк ПА" в разработке</p>
-          </div>
-        ) : (
-          <PANachalnik />
-        )
+        return userRole === 'admin' ? <PAAdmin /> : <PANachalnik />
       case 'deviations':
         return (
           <div className="flex items-center justify-center h-full">
@@ -92,6 +88,11 @@ function App() {
 
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />
+  }
+
+  // Если роль оператора, показываем специальную страницу без Layout
+  if (userRole === 'operator') {
+    return <Operator userInfo={userInfo} onLogout={handleLogout} />
   }
 
   return (

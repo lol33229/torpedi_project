@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export type UserRole = 'admin' | 'nachalnik'
+export type UserRole = 'admin' | 'nachalnik' | 'operator'
 
 interface LoginProps {
   onLogin: (role: UserRole, userInfo: { name: string; initials: string; role: string }) => void
@@ -12,7 +12,7 @@ function Login({ onLogin }: LoginProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Проверка логина и пароля
     // Администратор: Ivanov222 / любой пароль
     if (login.toLowerCase() === 'ivanov222' || login.toLowerCase() === 'иванов222') {
@@ -23,7 +23,7 @@ function Login({ onLogin }: LoginProps) {
       })
       return
     }
-    
+
     // Начальник: Petrov / любой пароль или другие данные
     if (login.toLowerCase() === 'petrov' || login.toLowerCase() === 'петров') {
       onLogin('nachalnik', {
@@ -33,7 +33,17 @@ function Login({ onLogin }: LoginProps) {
       })
       return
     }
-    
+
+    // Оператор: Operator / любой пароль
+    if (login.toLowerCase() === 'operator' || login.toLowerCase() === 'оператор') {
+      onLogin('operator', {
+        name: 'Петров П.П.',
+        initials: 'ПП',
+        role: 'Оператор'
+      })
+      return
+    }
+
     // По умолчанию - начальник
     onLogin('nachalnik', {
       name: 'Петров П.П',
@@ -48,7 +58,7 @@ function Login({ onLogin }: LoginProps) {
         <h1 className="text-[48px] font-bold text-[#2C2C2C] text-center mb-8" style={{ lineHeight: '120%', letterSpacing: '-3%' }}>
           Вход в систему
         </h1>
-        
+
         <div className="bg-gray-100 rounded-lg p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

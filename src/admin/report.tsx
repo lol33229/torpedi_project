@@ -27,20 +27,20 @@ function Report() {
   }
 
   return (
-    <div className="w-full">
-      <div className="bg-white rounded-lg  p-6">
+    <div className="w-full px-3 sm:px-4 lg:px-6">
+      <div className="bg-white rounded-lg p-4 sm:p-6">
         {/* Фильтры */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <label className="text-[16px] font-semibold text-black whitespace-nowrap">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              <label className="text-[14px] sm:text-[15px] lg:text-[16px] font-semibold text-black whitespace-nowrap min-w-[140px]">
                 Подразделение:
               </label>
-              <div className="relative flex-1">
+              <div className="relative w-full sm:w-[220px]">
                 <select
                   value={selectedDepartment}
                   onChange={(e) => setSelectedDepartment(e.target.value)}
-                  className="w-[268px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-4 text-[14px] font-medium text-gray-700 bg-white appearance-none focus:outline-none focus:border-[#7B79E6] cursor-pointer"
+                  className="w-full h-[40px] rounded-lg border-2 border-[#CCCCCC] px-3 sm:px-4 text-[14px] font-medium text-gray-700 bg-white appearance-none focus:outline-none focus:border-[#7B79E6] cursor-pointer"
                 >
                   <option value="" disabled>
                     Выберите подразделение
@@ -59,15 +59,15 @@ function Report() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <label className="text-[16px] font-semibold text-black whitespace-nowrap">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              <label className="text-[14px] sm:text-[15px] lg:text-[16px] font-semibold text-black whitespace-nowrap min-w-[140px]">
                 Смена:
               </label>
-              <div className="relative flex-1">
+              <div className="relative w-full sm:w-[220px]">
                 <select
                   value={selectedShift}
                   onChange={(e) => setSelectedShift(e.target.value)}
-                  className="w-[268px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-4 text-[14px] font-medium text-gray-700 bg-white appearance-none focus:outline-none focus:border-[#7B79E6] cursor-pointer"
+                  className="w-full h-[40px] rounded-lg border-2 border-[#CCCCCC] px-3 sm:px-4 text-[14px] font-medium text-gray-700 bg-white appearance-none focus:outline-none focus:border-[#7B79E6] cursor-pointer"
                 >
                   <option value="" disabled>
                     Выберите смену
@@ -87,45 +87,45 @@ function Report() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <label className="text-[16px] font-semibold text-black whitespace-nowrap">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              <label className="text-[14px] sm:text-[15px] lg:text-[16px] font-semibold text-black whitespace-nowrap min-w-[140px]">
                 Период:
               </label>
-              <div className="flex items-center gap-2 flex-1">
+              <div className="flex items-center gap-2 w-full sm:w-[210px]">
                 <input
                   type="text"
                   value={day}
                   onChange={(e) => setDay(e.target.value)}
                   placeholder="дд"
-                  className="w-[80px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-3 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
+                  className="w-full h-[40px] rounded-lg border-2 border-[#CCCCCC] px-2 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
                 />
                 <input
                   type="text"
                   value={month}
                   onChange={(e) => setMonth(e.target.value)}
                   placeholder="мм"
-                  className="w-[80px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-3 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
+                  className="w-full h-[40px] rounded-lg border-2 border-[#CCCCCC] px-2 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
                 />
                 <input
                   type="text"
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                   placeholder="гггг"
-                  className="w-[80px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-3 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
+                  className="w-full h-[40px] rounded-lg border-2 border-[#CCCCCC] px-2 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <label className="text-[16px] font-semibold text-black whitespace-nowrap">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              <label className="text-[14px] sm:text-[15px] lg:text-[16px] font-semibold text-black whitespace-nowrap min-w-[140px]">
                 Продукция:
               </label>
-              <div className="relative flex-1">
+              <div className="relative w-full sm:w-[210px]">
                 <select
                   value={selectedProduction}
                   onChange={(e) => setSelectedProduction(e.target.value)}
-                  className="w-[258px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-4 text-[14px] font-medium text-gray-700 bg-white appearance-none focus:outline-none focus:border-[#7B79E6] cursor-pointer"
+                  className="w-full h-[40px] rounded-lg border-2 border-[#CCCCCC] px-3 sm:px-4 text-[14px] font-medium text-gray-700 bg-white appearance-none focus:outline-none focus:border-[#7B79E6] cursor-pointer"
                 >
                   <option value="" disabled>
                     Выберите изделие
@@ -148,40 +148,36 @@ function Report() {
 
         {/* Распределение причин простоев */}
         <div className="mb-8">
-          <h2 className="text-[20px] font-bold text-black mb-6 text-center">
+          <h2 className="text-[17px] sm:text-[19px] lg:text-[20px] font-bold text-black mb-4 sm:mb-6 text-center">
             Распределение причин простоев
           </h2>
-          <div className="flex items-center justify-center gap-12">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 lg:gap-12">
             {/* Легенда */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#FBFF00]"></div>
-                <span className="text-[16px] font-medium text-black">Группа 1</span>
+            <div className="flex flex-col gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#FBFF00]"></div>
+                <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-medium text-black">Группа 1</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#FF0000]"></div>
-                <span className="text-[16px] font-medium text-black">Группа 2</span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#FF0000]"></div>
+                <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-medium text-black">Группа 2</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#44FF44]"></div>
-                <span className="text-[16px] font-medium text-black">Группа 3</span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#44FF44]"></div>
+                <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-medium text-black">Группа 3</span>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full bg-[#4444FF]"></div>
-                <span className="text-[16px] font-medium text-black">Группа 4</span>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-4 sm:w-5 h-4 sm:h-5 rounded-full bg-[#4444FF]"></div>
+                <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-medium text-black">Группа 4</span>
               </div>
             </div>
 
             {/* Круговая диаграмма */}
-            <div className="w-[250px] h-[250px] relative">
+            <div className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px] lg:w-[250px] lg:h-[250px] relative">
               <svg viewBox="0 0 200 200" className="w-full h-full">
-                {/* Group 3 - 50% (top-right quadrant: от верха вправо) */}
                 <path d="M 100,100 L 100,0 A 100,100 0 0,1 200,100 L 100,100 Z" fill="#44FF44" />
-                {/* Group 3 - продолжение (top-left quadrant: от левой точки вверх) */}
                 <path d="M 100,100 L 0,100 A 100,100 0 0,1 100,0 L 100,100 Z" fill="#44FF44" />
-                {/* Group 1 - 25% (bottom-left quadrant: от левой точки вниз) */}
                 <path d="M 100,100 L 100,0 A 100,100 0 0,1 200,100 L 100,100 Z" fill="#FBFF00" />
-                {/* Group 2 - 25% (bottom-right quadrant: от нижней точки вправо) */}
                 <path d="M 100,100 L 100,0 A 100,100 0 0,1 200,100 L 100,100 Z" fill="#FF0000" />
               </svg>
             </div>
@@ -190,65 +186,71 @@ function Report() {
 
         {/* Таблица детализации */}
         <div className="mt-8">
-          <h2 className="text-[20px] font-bold text-black mb-6 text-center">
+          <h2 className="text-[17px] sm:text-[19px] lg:text-[20px] font-bold text-black mb-4 sm:mb-6 text-center">
             Детализация по группам причин
           </h2>
-          <div className="flex items-end gap-6">
-            <div className="border-2 border-gray-300 rounded-lg overflow-hidden flex-1">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[16px] font-bold text-black">Причина</span>
-                    </th>
-                    <th className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[16px] font-bold text-black">Отклонения (шт)</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white hover:bg-gray-50">
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">Группа 1, причина 1</span>
-                    </td>
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">-5</span>
-                    </td>
-                  </tr>
-                  <tr className="bg-white hover:bg-gray-50">
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">Группа 2, причина 2</span>
-                    </td>
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">-3</span>
-                    </td>
-                  </tr>
-                  <tr className="bg-white hover:bg-gray-50">
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">Группа 3, причина 3</span>
-                    </td>
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">-2</span>
-                    </td>
-                  </tr>
-                  <tr className="bg-white hover:bg-gray-50">
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">Группа 4, причина 4</span>
-                    </td>
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-medium text-black">-5</span>
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-100 font-bold">
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-bold text-black">Общий итог</span>
-                    </td>
-                    <td className="border-2 border-gray-300 px-4 py-3 text-center">
-                      <span className="text-[14px] font-bold text-black">-15</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+
+          <div className="flex flex-col md:flex-row items-end gap-6">
+            {/* Таблица */}
+            <div className="w-full md:flex-1">
+              <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-bold text-black">Причина</span>
+                        </th>
+                        <th className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[14px] sm:text-[15px] lg:text-[16px] font-bold text-black">Отклонения (шт)</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="bg-white hover:bg-gray-50">
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">Группа 1, причина 1</span>
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">-5</span>
+                        </td>
+                      </tr>
+                      <tr className="bg-white hover:bg-gray-50">
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">Группа 2, причина 2</span>
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">-3</span>
+                        </td>
+                      </tr>
+                      <tr className="bg-white hover:bg-gray-50">
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">Группа 3, причина 3</span>
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">-2</span>
+                        </td>
+                      </tr>
+                      <tr className="bg-white hover:bg-gray-50">
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">Группа 4, причина 4</span>
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-medium text-black">-5</span>
+                        </td>
+                      </tr>
+                      <tr className="bg-gray-100 font-bold">
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-bold text-black">Общий итог</span>
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 sm:px-4 py-2 sm:py-3 text-center">
+                          <span className="text-[13px] sm:text-[14px] font-bold text-black">-15</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
 
             {/* Кнопки экспорта */}
@@ -274,4 +276,3 @@ function Report() {
 }
 
 export default Report
-

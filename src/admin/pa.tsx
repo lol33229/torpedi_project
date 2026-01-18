@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import EditPA from './editPA'
 
 function PA() {
   const [blanks, setBlanks] = useState([
@@ -8,13 +9,29 @@ function PA() {
     { id: 4, number: 4 },
   ])
 
+  const [editingBlank, setEditingBlank] = useState<{ id: number; number: number } | null>(null)
+
   const handleEdit = (id: number) => {
-    console.log('Редактировать бланк', id)
-    // Здесь будет логика редактирования
+    const blank = blanks.find(b => b.id === id)
+    if (blank) {
+      setEditingBlank({ id: blank.id, number: blank.number })
+    }
+  }
+
+  if (editingBlank) {
+    return (
+      <EditPA
+        blankId={editingBlank.id}
+        blankNumber={editingBlank.number}
+        onBack={() => setEditingBlank(null)}
+      />
+    )
   }
 
   const handleDelete = (id: number) => {
-    setBlanks(blanks.filter((blank) => blank.id !== id))
+    if (window.confirm(`Вы уверены, что хотите удалить бланк № ${blanks.find(b => b.id === id)?.number}?`)) {
+      setBlanks(blanks.filter((blank) => blank.id !== id))
+    }
   }
 
   const handleAddNew = () => {
