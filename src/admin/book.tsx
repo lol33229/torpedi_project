@@ -1,31 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { catalogApi, type Catalog } from '../services/api'
 
 interface BookProps {
-  onEditDirectory: (directoryName: string) => void
+  onEditDirectory: (directoryName: string, catalogId: number) => void
 }
 
 function Book({ onEditDirectory }: BookProps) {
-  const [items, setItems] = useState([
-    'Наименование продукции',
-    'Подразделение',
-    'Смена',
-    'Время работы',
-    'Ответственный за простой',
-    'Группы причин за простой',
-    'ФИО заполняющего',
-  ])
+  const [catalogs, setCatalogs] = useState<Catalog[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleDelete = (index: number) => {
-    if (window.confirm(`Вы уверены, что хотите удалить справочник "${items[index]}"?`)) {
-      const newItems = items.filter((_, i) => i !== index)
-      setItems(newItems)
+  useEffect(() => {
+    loadCatalogs()
+  }, [])
+
+  const loadCatalogs = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await catalogApi.getAll()
+      setCatalogs(data)
+    } catch (err: any) {
+      console.error('Ошибка загрузки справочников:', err)
+      setError('Не удалось загрузить справочники')
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleAdd = () => {
+  const handleDelete = async (catalog: Catalog) => {
+    if (window.confirm(`Вы уверены, что хотите удалить справочник "${catalog.title}"?`)) {
+      try {
+        await catalogApi.delete(catalog.id)
+        await loadCatalogs()
+      } catch (err: any) {
+        console.error('Ошибка удаления справочника:', err)
+        alert('Не удалось удалить справочник')
+      }
+    }
+  }
+
+  const handleAdd = async () => {
     const newItem = prompt('Введите название нового справочника:')
     if (newItem && newItem.trim()) {
-      setItems([...items, newItem.trim()])
+      try {
+        await catalogApi.create(newItem.trim(), [])
+        await loadCatalogs()
+      } catch (err: any) {
+        console.error('Ошибка создания справочника:', err)
+        alert('Не удалось создать справочник')
+      }
     }
   }
 
@@ -63,32 +87,38 @@ function Book({ onEditDirectory }: BookProps) {
         </div>
 
         {/* Список справочников */}
-        <div className="flex flex-col gap-0">
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col sm:flex-row sm:items-center justify-between py-3 px-2 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors gap-2 sm:gap-0"
-            >
-              <span className="text-[16px] md:text-[18px] font-medium text-black text-center sm:text-left">
-                {item}
-              </span>
-              <div className="flex gap-2 justify-center sm:justify-end">
-                <button
-                  onClick={() => onEditDirectory(item)}
-                  className="w-full sm:w-[100px] h-[32px] rounded bg-[#2C2C2C] text-[14px] font-medium text-white hover:bg-gray-700 transition"
-                >
-                  Изменить
-                </button>
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="w-full sm:w-[100px] h-[32px] rounded bg-[#EC221F] text-[14px] font-medium text-white hover:bg-red-700 transition"
-                >
-                  Удалить
-                </button>
+        {loading ? (
+          <div className="text-center py-8 text-gray-600">Загрузка...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-600">{error}</div>
+        ) : (
+          <div className="flex flex-col gap-0">
+            {catalogs.map((catalog) => (
+              <div
+                key={catalog.id}
+                className="flex flex-col sm:flex-row sm:items-center justify-between py-3 px-2 border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors gap-2 sm:gap-0"
+              >
+                <span className="text-[16px] md:text-[18px] font-medium text-black text-center sm:text-left">
+                  {catalog.title}
+                </span>
+                <div className="flex gap-2 justify-center sm:justify-end">
+                  <button
+                    onClick={() => onEditDirectory(catalog.title, catalog.id)}
+                    className="w-full sm:w-[100px] h-[32px] rounded bg-[#2C2C2C] text-[14px] font-medium text-white hover:bg-gray-700 transition"
+                  >
+                    Изменить
+                  </button>
+                  <button
+                    onClick={() => handleDelete(catalog)}
+                    className="w-full sm:w-[100px] h-[32px] rounded bg-[#EC221F] text-[14px] font-medium text-white hover:bg-red-700 transition"
+                  >
+                    Удалить
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

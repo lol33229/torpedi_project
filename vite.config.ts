@@ -3,6 +3,22 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5182',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Убираем /api, так как эндпоинты идут без префикса
+      },
+      // Прокси для прямых путей (если нужно)
+      '^/(register|login|user|catalog|hourlyByTactTime|hourlyByPower|hourlySeveral|lessThanPerHour|downtime|manage)': {
+        target: 'http://localhost:5182',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
   plugins: [
     react(),
     VitePWA({

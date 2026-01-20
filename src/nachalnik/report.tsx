@@ -16,6 +16,11 @@ function Report() {
 
   const shifts = ['Ранняя', 'Поздняя', 'Ночная']
 
+  const handleApply = () => {
+    // Здесь будет логика применения фильтров
+    console.log('Применение фильтров:', { selectedDepartment, selectedShift, day, month, year })
+  }
+
   return (
     <div className="w-full">
       <div className="bg-white rounded-lg p-4 md:p-6">
@@ -80,10 +85,10 @@ function Report() {
             </div>
           </div>
 
-          {/* Правая колонка - Дата (на мобилах занимает второе место, на планшетах - вторую колонку) */}
+          {/* Правая колонка - Период с кнопкой Применить */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 md:ml-10">
             <label className="text-[14px] md:text-[16px] font-semibold text-black whitespace-nowrap">
-              Дата:
+              Период:
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -91,6 +96,7 @@ function Report() {
                 value={day}
                 onChange={(e) => setDay(e.target.value)}
                 placeholder="дд"
+                maxLength={2}
                 className="w-[50px] md:w-[60px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-2 md:px-3 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
               />
               <input
@@ -98,6 +104,7 @@ function Report() {
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
                 placeholder="мм"
+                maxLength={2}
                 className="w-[50px] md:w-[60px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-2 md:px-3 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
               />
               <input
@@ -105,8 +112,15 @@ function Report() {
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
                 placeholder="гггг"
+                maxLength={4}
                 className="w-[70px] md:w-[80px] h-[40px] rounded-lg border-2 border-[#CCCCCC] px-2 md:px-3 text-[14px] font-medium text-gray-700 bg-white text-center focus:outline-none focus:border-[#7B79E6]"
               />
+              <button
+                onClick={handleApply}
+                className="h-[40px] px-4 bg-[#2C2C2C] text-white text-[14px] font-medium rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap"
+              >
+                Применить
+              </button>
             </div>
           </div>
 

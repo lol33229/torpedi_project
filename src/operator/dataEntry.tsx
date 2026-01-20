@@ -1,9 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import UserSelector from '../components/UserSelector'
+import ReasonGroupSelector from '../components/ReasonGroupSelector'
+import { paBlankApi } from '../services/api'
 
 interface DataEntryProps {
   userInfo: { name: string; initials: string; role: string }
   onBack: () => void
   onLogout: () => void
+  blankId?: number
 }
 
 interface TimeSlot {
@@ -20,7 +24,7 @@ interface TimeSlot {
   reasons: string
 }
 
-function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
+function DataEntry({ userInfo, onBack, onLogout, blankId }: DataEntryProps) {
   const [productName, setProductName] = useState('')
   const [department, setDepartment] = useState('')
   const [fillerName, setFillerName] = useState('')
@@ -44,6 +48,68 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
   ]
 
   const [rows, setRows] = useState<TimeSlot[]>(timeSlots)
+  const [loading, setLoading] = useState(false)
+
+  // Загрузка данных бланка при открытии
+  useEffect(() => {
+    const loadBlank = async () => {
+      if (blankId && blankId > 0) {
+        try {
+          setLoading(true)
+          const blank = await paBlankApi.getById(blankId)
+          
+          // Заполняем поля формы
+          if (blank.productName) setProductName(blank.productName)
+          if (blank.department) setDepartment(blank.department)
+          if (blank.fillerName) setFillerName(blank.fillerName)
+          if (blank.cycleTime) setCycleTime(blank.cycleTime)
+          if (blank.dailyPace) setDailyPace(blank.dailyPace)
+          
+          // Загружаем строки данных, если они есть
+          if (blank.rows && Array.isArray(blank.rows) && blank.rows.length > 0) {
+            // Преобразуем данные бланка в формат TimeSlot
+            const loadedRows: TimeSlot[] = blank.rows.map((row: any) => ({
+              time: row.time || '',
+              plan: row.plan?.toString() || '',
+              planCumulative: row.planCumulative?.toString() || '',
+              fact: row.fact?.toString() || '',
+              factCumulative: row.factCumulative?.toString() || '',
+              deviation: row.deviation?.toString() || '',
+              deviationCumulative: row.deviationCumulative?.toString() || '',
+              downtime: row.downtime?.toString() || '',
+              responsible: row.responsible || '',
+              reasonGroups: row.reasonGroups || '',
+              reasons: row.reasons || ''
+            }))
+            
+            // Если загруженных строк меньше, чем стандартных, дополняем стандартными
+            if (loadedRows.length < timeSlots.length) {
+              const mergedRows = [...loadedRows]
+              timeSlots.forEach((slot, index) => {
+                if (index >= loadedRows.length) {
+                  mergedRows.push(slot)
+                }
+              })
+              setRows(mergedRows)
+            } else {
+              setRows(loadedRows)
+            }
+          }
+        } catch (error: any) {
+          console.error('Ошибка загрузки бланка:', error)
+          if (error.response?.status === 404) {
+            alert('Бланк не найден')
+          } else {
+            alert('Ошибка загрузки бланка: ' + (error.message || error))
+          }
+        } finally {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadBlank()
+  }, [blankId])
 
   const handleSave = () => {
     // Здесь будет логика сохранения данных
@@ -62,7 +128,7 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
   const updateRow = (index: number, field: keyof TimeSlot, value: string) => {
     const newRows = [...rows]
     newRows[index] = { ...newRows[index], [field]: value }
-    
+
     // Автоматический расчет накопительных значений и отклонений
     if (field === 'plan' || field === 'fact') {
       // Пересчитываем накопительные значения
@@ -80,7 +146,7 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
         newRows[i].deviationCumulative = deviationSum !== 0 ? deviationSum.toString() : ''
       }
     }
-    
+
     setRows(newRows)
   }
 
@@ -110,7 +176,7 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
             </svg>
             Назад
           </button>
-          
+
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
@@ -121,7 +187,7 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
                 <span className="text-[14px] text-gray-600">{userInfo.role}</span>
               </div>
             </div>
-            <button 
+            <button
               onClick={onLogout}
               className="p-2 hover:bg-gray-100 rounded transition-colors"
               title="Выйти из учётной записи"
@@ -149,6 +215,10 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
       {/* Основной контент */}
       <main className="pt-[80px] p-6">
         <div className="bg-white rounded-lg border-2 border-gray-300 p-6 max-w-[1600px] mx-auto overflow-x-auto">
+          {loading ? (
+            <div className="text-center py-8 text-gray-600">Загрузка бланка...</div>
+          ) : (
+            <>
           {/* Статическая информация */}
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div className="space-y-4">
@@ -178,12 +248,14 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
                 <label className="text-[14px] font-semibold text-black whitespace-nowrap min-w-[200px]">
                   ФИО заполняющего:
                 </label>
-                <input
-                  type="text"
-                  value={fillerName}
-                  onChange={(e) => setFillerName(e.target.value)}
-                  className="flex-1 h-[40px] rounded-lg border-2 border-[#CCCCCC] px-4 text-[14px] font-medium text-gray-700 bg-white focus:outline-none focus:border-[#7B79E6]"
-                />
+                <div className="flex-1">
+                  <UserSelector
+                    value={fillerName}
+                    onChange={setFillerName}
+                    className="h-[40px] rounded-lg border-2 border-[#CCCCCC] px-4 text-[14px] font-medium text-gray-700 bg-white focus:outline-none focus:border-[#7B79E6]"
+                    placeholder="Выберите пользователя..."
+                  />
+                </div>
               </div>
               <div className="flex items-center gap-4">
                 <label className="text-[14px] font-semibold text-black whitespace-nowrap min-w-[200px]">
@@ -318,11 +390,10 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
                       />
                     </td>
                     <td className="border-2 border-gray-300 px-2 py-1">
-                      <input
-                        type="text"
-                        value={row.reasonGroups}
-                        onChange={(e) => updateRow(index, 'reasonGroups', e.target.value)}
-                        className="w-full h-[32px] px-2 text-center text-[12px] border-0 focus:outline-none focus:bg-gray-50"
+                      <ReasonGroupSelector
+                        value={row.reasonGroups || ''}
+                        onChange={(value) => updateRow(index, 'reasonGroups', value)}
+                        className="w-full"
                       />
                     </td>
                     <td className="border-2 border-gray-300 px-2 py-1">
@@ -369,6 +440,8 @@ function DataEntry({ userInfo, onBack, onLogout }: DataEntryProps) {
               Сохранить изменения
             </button>
           </div>
+          </>
+          )}
         </div>
       </main>
     </div>

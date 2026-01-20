@@ -200,8 +200,8 @@ function Layout({ children, currentPage, onNavigate, onLogout, userRole, userInf
               key={item.id}
               onClick={() => onNavigate(item.id)}
               className={`w-full text-left px-4 py-3 text-[20px] font-medium transition-colors ${currentPage === item.id
-                ? 'bg-[#9B98FF] text-black'
-                : 'text-black hover:bg-gray-100'
+                ? 'bg-[#2C2C2C] text-white'
+                : 'text-black hover:bg-[#2C2C2C] hover:text-white'
                 }`}
             >
               {item.label}

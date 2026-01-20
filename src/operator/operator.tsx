@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import DataEntry from './dataEntry'
+import { useState, useEffect } from 'react'
+import EditPA from '../admin/editPA'
+import { paBlankApi } from '../services/api'
+import type { PABlank } from '../services/api'
 
 interface OperatorProps {
   userInfo: { name: string; initials: string; role: string }
@@ -8,6 +10,9 @@ interface OperatorProps {
 
 function Operator({ userInfo, onLogout }: OperatorProps) {
   const [showDataEntry, setShowDataEntry] = useState(false)
+  const [selectedBlankId, setSelectedBlankId] = useState<number | undefined>(undefined)
+  const [blanks, setBlanks] = useState<PABlank[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedDepartment, setSelectedDepartment] = useState('')
   const [selectedShift, setSelectedShift] = useState('')
   const [day, setDay] = useState('')
@@ -22,17 +27,107 @@ function Operator({ userInfo, onLogout }: OperatorProps) {
 
   const shifts = ['Ранняя', 'Поздняя', 'Ночная']
 
+  // Загрузка бланков для текущего оператора (фильтрация по ФИО)
+  const loadBlanks = async () => {
+    try {
+      setLoading(true)
+      const allBlanks = await paBlankApi.getAll()
+      // Фильтруем бланки по ФИО заполняющего (должно совпадать с именем оператора)
+      const operatorBlanks = allBlanks.filter(blank =>
+        blank.fillerName && blank.fillerName.trim() === userInfo.name.trim()
+      )
+      setBlanks(operatorBlanks)
+    } catch (error) {
+      console.error('Ошибка загрузки бланков:', error)
+      setBlanks([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadBlanks()
+  }, [userInfo.name])
+
   const handleApply = () => {
     // Здесь будет логика применения фильтров
     console.log('Применение фильтров:', { selectedDepartment, selectedShift, day, month, year })
   }
 
-  const handleStartDataEntry = () => {
+  const handleStartDataEntry = (blankId?: number) => {
+    // Если есть бланки, используем первый, иначе открываем пустой
+    if (blankId) {
+      setSelectedBlankId(blankId)
+    } else if (blanks.length > 0) {
+      // Используем первый доступный бланк
+      setSelectedBlankId(blanks[0].id)
+    } else {
+      setSelectedBlankId(undefined)
+    }
     setShowDataEntry(true)
   }
 
   if (showDataEntry) {
-    return <DataEntry userInfo={userInfo} onBack={() => setShowDataEntry(false)} onLogout={onLogout} />
+    // Если есть selectedBlankId, используем его, иначе берем первый бланк
+    const targetBlankId = selectedBlankId || (blanks.length > 0 ? blanks[0].id : undefined)
+    console.log('Operator: showDataEntry=true, selectedBlankId:', selectedBlankId, 'targetBlankId:', targetBlankId, 'blanks:', blanks.map(b => ({ id: b.id, blankNumber: b.blankNumber })))
+    const blank = blanks.find(b => b.id === targetBlankId)
+    
+    if (!targetBlankId || targetBlankId === 0) {
+      console.log('Operator: targetBlankId невалиден:', targetBlankId)
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Бланк не выбран</p>
+            <button
+              onClick={() => {
+                setShowDataEntry(false)
+                setSelectedBlankId(undefined)
+              }}
+              className="px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300"
+            >
+              Назад
+            </button>
+          </div>
+        </div>
+      )
+    }
+    
+    if (!blank && targetBlankId) {
+      return (
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">Бланк не найден в списке</p>
+            <button
+              onClick={() => {
+                setShowDataEntry(false)
+                setSelectedBlankId(undefined)
+              }}
+              className="px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300"
+            >
+              Назад
+            </button>
+          </div>
+        </div>
+      )
+    }
+    
+    // Убеждаемся, что targetBlankId - это число
+    const validBlankId = typeof targetBlankId === 'number' && targetBlankId > 0 ? targetBlankId : 0
+    console.log('Operator: Передаем в EditPA, validBlankId:', validBlankId, 'blankNumber:', blank?.blankNumber)
+    
+    return (
+      <EditPA
+        blankId={validBlankId}
+        blankNumber={blank?.blankNumber || 1}
+        onBack={() => {
+          setShowDataEntry(false)
+          setSelectedBlankId(undefined)
+          loadBlanks() // Обновляем список после возврата
+        }}
+        isOperator={true}
+      />
+    )
   }
 
   return (
@@ -199,10 +294,92 @@ function Operator({ userInfo, onLogout }: OperatorProps) {
             </div>
           </div>
 
+          {/* Таблица с бланками оператора */}
+          <div className="mb-8">
+            <h2 className="text-[18px] font-bold text-black mb-4">
+              Бланки ПА
+            </h2>
+            {loading ? (
+              <div className="text-center py-8 text-gray-600">Загрузка бланков...</div>
+            ) : blanks.length === 0 ? (
+              <div className="text-center py-8 text-gray-600">
+                Нет бланков для вашего ФИО ({userInfo.name})
+              </div>
+            ) : (
+              <div className="overflow-x-auto mb-4">
+                <table className="w-full border-collapse border-2 border-gray-300 text-[12px]">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border-2 border-gray-300 px-3 py-2 text-left font-semibold text-black">
+                        № бланка
+                      </th>
+                      <th className="border-2 border-gray-300 px-3 py-2 text-left font-semibold text-black">
+                        Тип ПА
+                      </th>
+                      <th className="border-2 border-gray-300 px-3 py-2 text-left font-semibold text-black">
+                        Наименование продукции
+                      </th>
+                      <th className="border-2 border-gray-300 px-3 py-2 text-left font-semibold text-black">
+                        Подразделение
+                      </th>
+                      <th className="border-2 border-gray-300 px-3 py-2 text-center font-semibold text-black">
+                        Действия
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {blanks.map((blank) => {
+                      // Безопасное извлечение строк из объектов
+                      const getStringValue = (value: any): string => {
+                        if (typeof value === 'string') return value
+                        if (value && typeof value === 'object' && 'value' in value) return value.value || ''
+                        return ''
+                      }
+                      
+                      return (
+                      <tr key={blank.id} className="hover:bg-gray-50">
+                        <td className="border-2 border-gray-300 px-3 py-2 text-[14px] font-medium text-black">
+                          {blank.blankNumber || blank.id}
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 py-2 text-[14px] text-black">
+                          {getStringValue(blank.paType) || '-'}
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 py-2 text-[14px] text-black">
+                          {getStringValue(blank.productName) || '-'}
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 py-2 text-[14px] text-black">
+                          {getStringValue(blank.department) || '-'}
+                        </td>
+                        <td className="border-2 border-gray-300 px-3 py-2 text-center">
+                          <button
+                            onClick={() => {
+                              const blankId = blank.id
+                              console.log('Operator: Открытие бланка, blank.id:', blankId, 'тип:', typeof blankId, 'blank:', blank)
+                              if (blankId && typeof blankId === 'number' && blankId > 0) {
+                                handleStartDataEntry(blankId)
+                              } else {
+                                console.error('Operator: blank.id невалиден:', blankId)
+                                alert('Ошибка: ID бланка невалиден')
+                              }
+                            }}
+                            className="px-4 py-1 bg-[#2C2C2C] text-white text-[14px] font-medium rounded hover:bg-gray-700 transition-colors"
+                          >
+                            Открыть
+                          </button>
+                        </td>
+                      </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
           {/* Кнопка начала ввода данных */}
           <div className="flex justify-center">
             <button
-              onClick={handleStartDataEntry}
+              onClick={() => handleStartDataEntry()}
               className="h-[40px] pt-[1px] px-8 bg-[#2C2C2C] text-white text-[20px] leading-[0] font-medium rounded-md hover:bg-gray-700 transition-colors"
             >
               Начать ввод данных

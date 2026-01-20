@@ -1,0 +1,66 @@
+{
+  "Запрос для проверки через Swagger UI": {
+    "endpoint": "POST /api/downtime",
+    "description": "Тестовый запрос для проверки создания downtime записи",
+    "test_requests": [
+      {
+        "name": "Минимальный запрос (только обязательные поля)",
+        "body": {
+          "documentId": 81,
+          "reasonGroupId": 21,
+          "downTime": 1,
+          "actionTake": ""
+        },
+        "comment": "Проверяем, работает ли запрос с минимальными данными"
+      },
+      {
+        "name": "С явным null для опциональных полей",
+        "body": {
+          "documentId": 81,
+          "reasonGroupId": 21,
+          "downTime": 1,
+          "actionTake": "",
+          "reasonId": null,
+          "responsibleId": null
+        },
+        "comment": "Проверяем, помогает ли явное указание null"
+      },
+      {
+        "name": "Без опциональных полей вообще",
+        "body": {
+          "documentId": 81,
+          "reasonGroupId": 21,
+          "downTime": 1,
+          "actionTake": ""
+        },
+        "comment": "Проверяем, работает ли без reasonId и responsibleId"
+      },
+      {
+        "name": "С валидным reasonId (если есть)",
+        "body": {
+          "documentId": 81,
+          "reasonGroupId": 21,
+          "downTime": 1,
+          "actionTake": "",
+          "reasonId": 1
+        },
+        "comment": "Проверяем, работает ли с валидным reasonId"
+      }
+    ],
+    "instructions": [
+      "1. Откройте Swagger UI (обычно http://localhost:5173/swagger или ваш адрес бэкенда)",
+      "2. Найдите endpoint POST /downtime",
+      "3. Нажмите 'Try it out'",
+      "4. Вставьте один из тестовых запросов в поле Request body",
+      "5. Нажмите 'Execute'",
+      "6. Посмотрите на ответ - если ошибка 500, скопируйте полный текст ошибки",
+      "7. Если успешно - значит формат правильный, нужно использовать его в коде"
+    ],
+    "current_error": "FK_ProductionDownTime_CatalogValue_ReasonId - нарушение foreign key для reasonId",
+    "possible_solutions": [
+      "Если запрос с null работает - отправлять reasonId: null явно",
+      "Если запрос без reasonId работает - не отправлять поле вообще",
+      "Если нужен валидный reasonId - получать его из справочника 'Причины отклонений'"
+    ]
+  }
+}
